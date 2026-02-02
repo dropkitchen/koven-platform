@@ -1,0 +1,13 @@
+services:
+  koven:
+    build:
+      context: ..
+      dockerfile: docker/koven/Dockerfile
+    depends_on:
+      - mqtt
+  mqtt:
+    build:
+      context: ..
+      dockerfile: docker/mqtt/Dockerfile
+    ports:
+      - 1883:1883
