@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Koven Platform</title>
+
+        <script src="/static/htmx.min.js"></script>
+        <script src="/static/json-enc.js"></script>
+        <script src="/static/client-side-templates.js"></script>
+        <script src="/static/mustache.js"></script>
+
+        <link rel="stylesheet" href="/static/site.css" type="text/css" />
+
+        <template id="device-state-template">
+            <div class="device-state">
+                <div class="state-header">
+                    <span class="state-badge state-{{state_class}}">{{state}}</span>
+                </div>
+                <div class="state-grid">
+                    <div class="state-item">
+                        <span class="state-label">Current Temperature</span>
+                        <span class="state-value">{{current_temperature}}</span>
+                    </div>
+                    <div class="state-item">
+                        <span class="state-label">Remaining Time</span>
+                        <span class="state-value">{{remaining_time}}</span>
+                    </div>
+                    <div class="state-item">
+                        <span class="state-label">Target Temperature</span>
+                        <span class="state-value">{{programmed_temperature}}</span>
+                    </div>
+                    <div class="state-item">
+                        <span class="state-label">Total Duration</span>
+                        <span class="state-value">{{programmed_duration}}</span>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Koven Platform Control</h1>
+
+            <div class="card">
+                <h2>Device State</h2>
+                <div id="device-state">
+                    <div class="device-state">
+                        <div class="state-header">
+                            <span class="state-badge state-unknown">CONNECTING...</span>
+                        </div>
+                        <div class="state-grid">
+                            <div class="state-item">
+                                <span class="state-label">Current Temperature</span>
+                                <span class="state-value">--</span>
+                            </div>
+                            <div class="state-item">
+                                <span class="state-label">Remaining Time</span>
+                                <span class="state-value">--</span>
+                            </div>
+                            <div class="state-item">
+                                <span class="state-label">Target Temperature</span>
+                                <span class="state-value">--</span>
+                            </div>
+                            <div class="state-item">
+                                <span class="state-label">Total Duration</span>
+                                <span class="state-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Control Panel</h2>
+                <form
+                    hx-post="/start"
+                    hx-ext="json-enc"
+                    hx-target="#start-response"
+                    hx-swap="innerHTML"
+                >
+                    <div class="controls">
+                        <div class="input-group">
+                            <label for="temperature">Temperature (°C)</label>
+                            <input
+                                type="number"
+                                id="temperature"
+                                name="temperature"
+                                value="180"
+                                min="0"
+                                max="300"
+                                required
+                            />
+                        </div>
+                        <div class="input-group">
+                            <label for="duration">Duration (seconds)</label>
+                            <input
+                                type="number"
+                                id="duration"
+                                name="duration"
+                                value="60"
+                                min="1"
+                                max="3600"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div style="margin-top: 16px">
+                        <button type="submit" class="btn-start">Start</button>
+                        <button
+                            type="button"
+                            class="btn-stop"
+                            hx-post="/stop"
+                            hx-target="#stop-response"
+                            hx-swap="innerHTML"
+                        >
+                            Stop
+                        </button>
+                    </div>
+                    <div id="start-response" class="response-message"></div>
+                    <div id="stop-response" class="response-message"></div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>
+                    <span class="connection-status" id="ws-status"></span>
+                    Event Stream
+                </h2>
+                <div class="events" id="events">
+                    <p style="color: #999; font-style: italic">Connecting to event stream...</p>
+                </div>
+            </div>
+        </div>
+        <script src="/static/site.js"></script>
+    </body>
+</html>
