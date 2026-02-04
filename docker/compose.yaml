@@ -5,9 +5,23 @@ services:
       dockerfile: docker/koven/Dockerfile
     depends_on:
       - mqtt
+    environment:
+      - MQTT_BROKER=tcp://mqtt:1883
+
+  platform:
+    build:
+      context: ..
+      dockerfile: docker/platform/Dockerfile
+    depends_on:
+      - mqtt
+    ports:
+      - "8080:8080"
+    environment:
+      - MQTT_BROKER=tcp://mqtt:1883
+
   mqtt:
     build:
       context: ..
       dockerfile: docker/mqtt/Dockerfile
     ports:
-      - 1883:1883
+      - "1883:1883"
